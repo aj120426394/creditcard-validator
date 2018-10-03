@@ -1,0 +1,40 @@
+@import "font-awesome/font-awesome";
+@import "materialize";
+@import "../abstracts/variables";
+@import "../abstracts/include-media";
+//$slick-font-path: "~slick-carousel/slick/fonts/";
+//$slick-loader-path: "~slick-carousel/slick/";
+//@import "~slick-carousel/slick/slick.scss";
+//@import "~slick-carousel/slick/slick-theme.scss";
+
+.row {
+  margin: 0;
+}
+
+html {
+  font-size: 15px;
+
+  @include media("retina2x") {
+    font-size: 25px;
+  }
+}
+
+a {
+  color: $griffith-red;
+  //text-decoration: underline;
+}
+
+p {
+  font-weight: 300;
+  line-height: 1.3;
+
+}
+
+.caption {
+  font-size: 0.9em;
+  font-style: italic;
+
+  @include media("<medium") {
+    padding: 0 20px;
+  }
+}

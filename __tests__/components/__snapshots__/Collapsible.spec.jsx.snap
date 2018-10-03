@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Collapsible rneders correctly 1`] = `
+<div>
+  <div
+    className=""
+    onClick={[Function]}
+  >
+    <h5>
+      testing
+    </h5>
+  </div>
+  <div
+    style={
+      Object {
+        "height": 0,
+        "overflow": "hidden",
+      }
+    }
+  >
+    <div
+      onClick={[Function]}
+    />
+  </div>
+</div>
+`;

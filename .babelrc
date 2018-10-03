@@ -1,0 +1,38 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "module": false
+      }
+    ],
+    "flow",
+    "react"
+  ],
+  "env": {
+    "test": {
+      "presets": [["env"], "flow", "react"],
+      "plugins": [
+        [
+          "babel-plugin-styled-components",
+          {
+            "displayName": true
+          }
+        ],
+        "transform-es2015-modules-commonjs",
+        "transform-class-properties"
+      ]
+    }
+  },
+  "plugins": [
+    "react-hot-loader/babel",
+    [
+      "babel-plugin-styled-components",
+      {
+        "displayName": true
+      }
+    ],
+    "transform-es2015-modules-commonjs",
+    "transform-class-properties"
+  ]
+}

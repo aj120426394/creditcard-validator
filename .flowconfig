@@ -1,0 +1,14 @@
+[ignore]
+.*/public/.*
+.*/node_modules/.*
+.*/vendor/.*
+[include]
+
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]
