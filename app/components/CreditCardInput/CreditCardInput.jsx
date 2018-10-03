@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCcVisa, faCcMastercard, faCcAmex, faCcDiscover } from '@fortawesome/free-brands-svg-icons';
+import { zIndex2 } from '../../styled-utils/depth';
 
 const OuterContainer = styled.div`
   width: 100%;
@@ -25,19 +26,7 @@ const InnerContainer = styled.div`
   overflow: hidden;
   justify-content: space-around;
   padding: 0 10px;
-  
-  > input {
-    border: none;
-    width: 100%;
-    height: 100%;
-    appearance: textfield;
-    &:focus {
-      outline: none;
-    }
-    &::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-    }
-  }
+  position: relative;
 `;
 const IconContainer = styled.div`
   width: 10%;
@@ -46,14 +35,49 @@ const IconContainer = styled.div`
   align-items: center;
   justify-content: center;
   color: grey;
+  z-index: 2;
+  position: relative;
 `;
 
+const InputBox = styled.input`
+  position: relative;
+  z-index: 2;
+  border: none;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  appearance: textfield;
+  &:focus {
+    outline: none;
+  }
+  &::-webkit-inner-spin-button,
+  ::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+`;
+const Placeholder = styled.input`
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 9.8px;
+  box-sizing: border-box;
+  border: none;
+`;
 
+type Props = {};
 
-export default class CreditCardInput extends React.Component {
+type State = {
+  icon: typeof faCcVisa,
+  placeholder: string
+};
+
+export default class CreditCardInput extends React.Component<Props, State> {
   state = {
-    icon: null
+    icon: null,
+    placeholder: "0000 0000 000000"
   };
+  input: ?HTMLInputElement;
 
   checkCreditCardType = (number) => {
     const regexAmex = /^(34|37)/;
@@ -62,22 +86,26 @@ export default class CreditCardInput extends React.Component {
     const regexVisa = /^4/;
 
     if (number.match(regexAmex) && number.match(regexAmex).length > 0) {
+      // AMEX
       console.log('amex');
       this.setState({
         icon: faCcAmex
       });
     } else if (number.match(regexDiscover) && number.match(regexDiscover).length > 0) {
-      console.log('discover')
+      // Discover
+      console.log('discover');
       this.setState({
         icon: faCcDiscover
       });
-    } else if (number.match(regexMastercard) && number.match(regexMastercard).length > 0){
-      console.log('master')
+    } else if (number.match(regexMastercard) && number.match(regexMastercard).length > 0) {
+      // Master
+      console.log('master');
       this.setState({
         icon: faCcMastercard
       });
-    } else if (number.match(regexVisa) && number.match(regexVisa).length > 0){
-      console.log('visa')
+    } else if (number.match(regexVisa) && number.match(regexVisa).length > 0) {
+      // Visa
+      console.log('visa');
       this.setState({
         icon: faCcVisa
       });
@@ -91,20 +119,25 @@ export default class CreditCardInput extends React.Component {
   onInputChange = (e) => {
     console.log(e.target.value);
     const input = e.target.value;
-    console.log(typeof input);
-    this.checkCreditCardType(input)
+    this.checkCreditCardType(input);
+    this.setState({
+      placeholder: input + " 0000"
+    });
   };
 
   render() {
     return (
       <OuterContainer>
         <InnerContainer>
-          <input type="number" placeholder="0000 0000 000000" onChange={this.onInputChange}/>
-          <IconContainer>
-            {this.state.icon && (<FontAwesomeIcon icon={this.state.icon}></FontAwesomeIcon>)}
-
-
-          </IconContainer>
+          <InputBox
+            innerRef={(ref) => {
+              this.input = ref;
+            }}
+            type="number"
+            onChange={this.onInputChange}
+          />
+          <Placeholder placeholder={this.state.placeholder} />
+          <IconContainer>{this.state.icon && <FontAwesomeIcon icon={this.state.icon} />}</IconContainer>
         </InnerContainer>
       </OuterContainer>
     );
