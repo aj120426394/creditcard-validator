@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCcVisa, faCcMastercard, faCcAmex, faCcDiscover } from '@fortawesome/free-brands-svg-icons';
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { zIndex2 } from '../../styled-utils/depth';
 
 const OuterContainer = styled.div`
@@ -69,17 +70,26 @@ type Props = {};
 
 type State = {
   icon: typeof faCcVisa,
-  placeholder: string
+  placeholder: string,
+  numberOfDigits: number,
+  inputValue: number
 };
 
 export default class CreditCardInput extends React.Component<Props, State> {
   state = {
     icon: null,
-    placeholder: "0000 0000 000000"
+    placeholder: '0000 0000 000000',
+    numberOfDigits: 0,
+    inputValue: ''
   };
   input: ?HTMLInputElement;
 
-  checkCreditCardType = (number) => {
+  /**
+   * Check for the card type
+   * @param {string} number - card number
+   * @return {string} - card type
+   */
+  checkCreditCardType = (number: string) => {
     const regexAmex = /^(34|37)/;
     const regexDiscover = /^6011/;
     const regexMastercard = /^5[1-5]/;
@@ -87,41 +97,52 @@ export default class CreditCardInput extends React.Component<Props, State> {
 
     if (number.match(regexAmex) && number.match(regexAmex).length > 0) {
       // AMEX
-      console.log('amex');
-      this.setState({
-        icon: faCcAmex
-      });
+      return 'amex';
     } else if (number.match(regexDiscover) && number.match(regexDiscover).length > 0) {
       // Discover
-      console.log('discover');
-      this.setState({
-        icon: faCcDiscover
-      });
+      return 'discover';
     } else if (number.match(regexMastercard) && number.match(regexMastercard).length > 0) {
       // Master
-      console.log('master');
-      this.setState({
-        icon: faCcMastercard
-      });
+      return 'master';
     } else if (number.match(regexVisa) && number.match(regexVisa).length > 0) {
       // Visa
-      console.log('visa');
-      this.setState({
-        icon: faCcVisa
-      });
+      return 'visa';
     } else {
-      this.setState({
-        icon: null
-      });
+      return 'none';
     }
   };
 
-  onInputChange = (e) => {
-    console.log(e.target.value);
+  onInputChange = (e: SyntheticEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    this.checkCreditCardType(input);
+    const cardType = this.checkCreditCardType(input);
+    let numberOfDigits = 0;
+    switch (cardType) {
+      case 'amex':
+        // 0000 000000 00000
+        numberOfDigits = 15;
+        break;
+      case 'discover':
+        // 0000 0000 0000 0000
+        numberOfDigits = 15;
+
+        break;
+      case 'master':
+        // 0000 0000 0000 0000
+        numberOfDigits = 15;
+
+        break;
+      case 'visa':
+        // 0000 0000 0000 0000
+        // 0000 0000 0000 0
+
+        break;
+      case 'none':
+        break;
+      default:
+
+    }
     this.setState({
-      placeholder: input + " 0000"
+      placeholder: input + ' 0000'
     });
   };
 
@@ -134,6 +155,8 @@ export default class CreditCardInput extends React.Component<Props, State> {
               this.input = ref;
             }}
             type="number"
+            maxlength="5"
+            value={this.state.inputValue}
             onChange={this.onInputChange}
           />
           <Placeholder placeholder={this.state.placeholder} />
