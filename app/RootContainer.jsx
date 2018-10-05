@@ -15,10 +15,14 @@ const InputContainer = styled.div`
   width: 50%;
 `;
 
+const getValidResult = (validResult) => {
+  console.log(validResult)
+};
+
 const RootContainer = () => (
   <Container>
     <InputContainer>
-      <CreditCardInput />
+      <CreditCardInput getValidResult={getValidResult} />
     </InputContainer>
   </Container>
 );

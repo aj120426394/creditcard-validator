@@ -84,7 +84,9 @@ const Placeholder = styled.input`
 `;
 type Valid = 'valid' | 'invalid' | 'matching';
 
-type Props = {};
+type Props = {
+  getValidResult?: (Valid) => void
+};
 
 type State = {
   icon: typeof faCcVisa,
@@ -263,6 +265,10 @@ export default class CreditCardInput extends React.Component<Props, State> {
       } else {
         return {};
       }
+    }, () => {
+      if (this.props.getValidResult) {
+        this.props.getValidResult(this.state.valid);
+      }
     });
   };
 
@@ -302,6 +308,7 @@ export default class CreditCardInput extends React.Component<Props, State> {
             {this.state.icon && (
               <FontAwesomeIcon
                 icon={this.state.icon}
+                size="lg"
                 style={{ cursor: this.state.valid === 'invalid' ? 'pointer' : 'default' }}
                 onClick={this.onClickOnReset}
               />

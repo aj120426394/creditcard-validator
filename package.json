@@ -8,6 +8,7 @@
     "hot": "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.js --progress --colors",
     "build": "yarn production",
     "production": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "test": "yarn test:unit:js",
     "test:unit:js": "jest",
     "lint:js": "eslint ./app-js/**/*.{js,jsx}",
     "lint:scss": "stylelint ./app-js/**/*.jsx",

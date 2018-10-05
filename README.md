@@ -1,19 +1,19 @@
 
-# [Faculty Story](https://teaching-resources.griffith.edu.au/faculty-story/)
-
-*Content to come.*
+# Demo: Credit card validated input
+*Demonstrating a React component: credit card number input*
 
 ## Contributors
 
-* [Daniel Tedman](http://danieltedman.com)
 * [Jeff Teng](mailto:j.teng@griffith.edu.au)
 
 ## Dependencies
 
 * [Git](https://git-scm.com)
-* [Node (v6)](https://nodejs.org)
-* [NPM (v3)](https://www.npmjs.com)
+* [Node (v8)](https://nodejs.org)
+* [Yarn (v1.10.1)](https://yarnpkg.com/en/)
 * [EditorConfig](http://editorconfig.org)
+* [React](https://reactjs.org/)
+* [Styled-components](https://www.styled-components.com/)
 
 ## Getting Started
 
@@ -23,60 +23,49 @@
 
 ```bash
 npm install
+or
+yarn install
 ```
 
-3\. Run build.
+3\. Start dev-server for demonstration
 
 ```bash
-npm run build
+npm run hot
+or
+yarn hot
 ```
 
-> If you have issues when running the build, you may need to manually install the history module, `npm install history`.
 
 ## Testing
 
-Testing provided by [Karma JS](https://karma-runner.github.io).
+Testing provided by [Jest](https://jestjs.io/) and [Enzyme](https://airbnb.io/enzyme/).
 
 ```bash
 npm run test
+or
+yarn test
 ```
 
-## Deployment
+## CreditCardInput
 
-*Deployment uses Subversion to migrate changes. All application dependencies need to be committed to to this Subversion repository because we do not have the ability to install them from each environment. Any compile processes like Webpack need to be run and their output files also committed to Subversion.*
+*A simple component for React, allow user to input credit card number and validate the number*
+*A react component is located at [./app/components/CreditCardInput](./app/components/CreditCardInput)*
 
-1\. Create a release preparation [PowerShell](https://msdn.microsoft.com/en-us/powershell/mt173057.aspx) script:
+### Props
+| Props | type | optional |  |
+|--- | :---: | :---: | --- |
+|`getValidResult` | *function* | yes | Callback method for parent component to get validation result
 
-```PowerShell
-#
-# Copies files needed for Develop to release changes via Subversion repository.
-#
-# See https://technet.microsoft.com/en-us/library/cc733145.aspx for robocopy docs.
-#
-
-$from = "D:\Workspace\faculty-story-react-git"
-$to = "D:\Workspace\faculty-story-svn"
-
-robocopy $from $to `
-    /mir `
-    /xd ".idea" `
-    /xd ".svn" `
-    /xd "node_modules" `
-    /xd ".git"
-
-# Now run commands from within the subversion directory.
-cd $to
-
-# Run production pre release commands.
-npm install
-npm prune
-
-# Compile static assets and prepare dist.
-npm run build
+### Usage
 ```
+const getValidResult = (result) => { console.log(result) }
 
-2\. Execute this script with PowerShell. Opening the script in the PowerShell ISE program is the easiest way to run it.
+<CreditCardInput getValidResult={getValidResult}/>
+```
+*Parent component can use `props: getValidResult` to get the result of validation. The result will be `valid | invalid | matching`*
 
-3\. Commit changes to Subversion. You will need to add any new files and delete any which have been removed.
+`valid`: the input number is a valid credit card number  
+`invalid`: the input number is an invalid credit card number  
+`matching`: the input number still under validating process
 
-4\. Use [Migration Manager](https://dsl1.secure.griffith.edu.au/subversion/list-migs.php) to migrate changes into target environment.
+

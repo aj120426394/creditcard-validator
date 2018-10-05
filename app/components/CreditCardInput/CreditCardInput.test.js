@@ -57,10 +57,10 @@ describe('CreditCardInput: ', () => {
     expect(formCardNumberToTemplate('9111111111111111', 'none')).toBe('9111111111111111');
   });
 
-  describe('Interaction ', () => {
+  describe('Interaction: User ', () => {
     const inputBox = mountWrapper.find(InputBox);
 
-    test('user input number that is Visa card', () => {
+    test('input number that is Visa card', () => {
       const inputValue = '41111111111';
       inputBox.simulate('change', { target: { value: inputValue } });
       expect(mountWrapper.state('valid')).toBe('matching');
@@ -85,7 +85,7 @@ describe('CreditCardInput: ', () => {
 
     });
 
-    test('user input number that is Amex card', () => {
+    test('input number that is Amex card', () => {
       const inputValue = '37828224631';
       inputBox.simulate('change', { target: { value: inputValue } });
       expect(mountWrapper.state('valid')).toBe('matching');
@@ -110,7 +110,7 @@ describe('CreditCardInput: ', () => {
 
     });
 
-    test('user input number that is Master card', () => {
+    test('input number that is Master card', () => {
       const inputValue = '51051051051';
       inputBox.simulate('change', { target: { value: inputValue } });
       expect(mountWrapper.state('valid')).toBe('matching');
@@ -134,7 +134,7 @@ describe('CreditCardInput: ', () => {
 
     });
 
-    test('user input number that is Discover card', () => {
+    test('input number that is Discover card', () => {
       const inputValue = '60111111111';
       inputBox.simulate('change', { target: { value: inputValue } });
       expect(mountWrapper.state('valid')).toBe('matching');
