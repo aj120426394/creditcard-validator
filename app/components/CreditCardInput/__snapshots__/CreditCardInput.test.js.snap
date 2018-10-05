@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreditCardInput:  render: Snapshot test 1`] = `
+<CreditCardInput>
+  <CreditCardInput__OuterContainer
+    valid="matching"
+  >
+    <div
+      className="CreditCardInput__OuterContainer-npp3l3-0 ixexGs"
+    >
+      <CreditCardInput__InnerContainer>
+        <div
+          className="CreditCardInput__InnerContainer-npp3l3-1 cPBAnQ"
+        >
+          <CreditCardInput__InputBox
+            innerRef={[Function]}
+            maxlength="5"
+            onChange={[Function]}
+            type="tel"
+            value=""
+          >
+            <input
+              className="CreditCardInput__InputBox-npp3l3-3 bnQDvB"
+              onChange={[Function]}
+              type="tel"
+              value=""
+            />
+          </CreditCardInput__InputBox>
+          <CreditCardInput__Placeholder
+            placeholder="Number on your credit card"
+          >
+            <input
+              className="CreditCardInput__Placeholder-npp3l3-4 eVDvks"
+              placeholder="Number on your credit card"
+            />
+          </CreditCardInput__Placeholder>
+          <CreditCardInput__IconContainer>
+            <div
+              className="CreditCardInput__IconContainer-npp3l3-2 bdFWjF"
+            />
+          </CreditCardInput__IconContainer>
+        </div>
+      </CreditCardInput__InnerContainer>
+    </div>
+  </CreditCardInput__OuterContainer>
+</CreditCardInput>
+`;

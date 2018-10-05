@@ -4,16 +4,24 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCcVisa, faCcMastercard, faCcAmex, faCcDiscover } from '@fortawesome/free-brands-svg-icons';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { zIndex2 } from '../../styled-utils/depth';
+import { zDepth1 } from '../../styled-utils/shadow';
 
 const OuterContainer = styled.div`
+  ${zDepth1};
   width: 100%;
-  height: 35px;
+  height: 40px;
   padding: 3px;
   box-sizing: border-box;
   border-radius: 5px;
-  background-image: linear-gradient(to right, #3ec8ac 0%, #4e90a4 100%),
-    linear-gradient(to right, #3ec8ac 0%, #4e90a4 100%);
+  background-image: ${(props) => {
+    if (props.valid === 'valid') {
+      return 'linear-gradient(to right, #3ec8ac 0%, #4e90a4 100%), linear-gradient(to right, #3ec8ac 0%, #4e90a4 100%)';
+    } else if (props.valid === 'invalid') {
+      return 'linear-gradient(to right, #f44336 0%, #e91e63 100%), linear-gradient(to right, #f44336 0%, #e91e63 100%)';
+    } else {
+      return 'linear-gradient(to right, #c73ec8 0%, #75faf6 100%), linear-gradient(to right, #c73ec8 0%, #75faf6 100%)';
+    }
+  }};
 `;
 
 const InnerContainer = styled.div`
@@ -30,17 +38,17 @@ const InnerContainer = styled.div`
   position: relative;
 `;
 const IconContainer = styled.div`
-  width: 10%;
+  width: 5%;
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   color: grey;
   z-index: 2;
   position: relative;
 `;
 
-const InputBox = styled.input`
+export const InputBox = styled.input`
   position: relative;
   z-index: 2;
   border: none;
@@ -48,12 +56,16 @@ const InputBox = styled.input`
   height: 100%;
   background: transparent;
   appearance: textfield;
+  font-size: 18px;
   &:focus {
     outline: none;
   }
   &::-webkit-inner-spin-button,
   ::-webkit-outer-spin-button {
     -webkit-appearance: none;
+  }
+  &::placeholder {
+    font-size: 18px;
   }
 `;
 const Placeholder = styled.input`
@@ -64,6 +76,11 @@ const Placeholder = styled.input`
   left: 9.8px;
   box-sizing: border-box;
   border: none;
+   font-size: 18px;
+
+  &::placeholder {
+    font-size: 18px;
+  }
 `;
 type Valid = 'valid' | 'invalid' | 'matching';
 
@@ -79,38 +96,67 @@ type State = {
 export default class CreditCardInput extends React.Component<Props, State> {
   state = {
     icon: null,
-    placeholder: '0000 0000 000000',
+    placeholder: 'Number on your credit card',
     shownValue: '',
     valid: 'matching'
   };
   input: ?HTMLInputElement;
 
   /**
-   * Check for the card type
-   * @param {string} number - card number
-   * @return {string} - card type
+   * Check for the card type and number of digits
+   * @param {string} cardNum - card number
+   * @return {[string, number]} - card type and number of digits
    */
-  checkCreditCardType = (number: string): string => {
+  checkCreditCardTypeAndNumberOfDigits = (cardNum: string): [string, number] => {
     const regexAmex = /^(34|37)/;
     const regexDiscover = /^6011/;
     const regexMastercard = /^5[1-5]/;
     const regexVisa = /^4/;
+    let numberOfDigits = 0;
 
-    if (number.match(regexAmex) && number.match(regexAmex).length > 0) {
+    if (regexAmex.exec(cardNum) !== null) {
       // AMEX
-      return 'amex';
-    } else if (number.match(regexDiscover) && number.match(regexDiscover).length > 0) {
+      numberOfDigits = 15;
+      return ['amex', numberOfDigits];
+    } else if (regexDiscover.exec(cardNum) !== null) {
       // Discover
-      return 'discover';
-    } else if (number.match(regexMastercard) && number.match(regexMastercard).length > 0) {
+      numberOfDigits = 16;
+      return ['discover', numberOfDigits];
+    } else if (regexMastercard.exec(cardNum) !== null) {
       // Master
-      return 'master';
-    } else if (number.match(regexVisa) && number.match(regexVisa).length > 0) {
+      numberOfDigits = 16;
+      return ['master', numberOfDigits];
+    } else if (regexVisa.exec(cardNum) !== null) {
       // Visa
-      return 'visa';
+      numberOfDigits = cardNum.length < 14 ? 13 : 16;
+      return ['visa', numberOfDigits];
     } else {
-      return 'none';
+      numberOfDigits = 0;
+      return ['none', numberOfDigits];
     }
+  };
+
+  /**
+   * Validate the card number.
+   * @param {string} cardNum - User's input card number
+   * @param {number} numberOfDigits - The number of the digits regards to card type.
+   * @returns {string} - 'valid' | 'invalid' | 'matching'
+   */
+  cardValidation = (cardNum: string, numberOfDigits: number): Valid => {
+    const startWith = /^[3456]/;
+    // If first digits do not match the requirement
+    if (cardNum.length !== 0 && startWith.exec(cardNum) === null) {
+      return 'invalid';
+    }
+    // If user input more than 4 digits and there is no card type match
+    if (cardNum.length >= 4 && numberOfDigits === 0) {
+      return 'invalid';
+    }
+
+    if (cardNum.length !== numberOfDigits || cardNum.length === 0) {
+      return 'matching';
+    }
+    return this.luhnMethod(cardNum) ? 'valid' : 'invalid';
   };
 
   /**
@@ -118,20 +164,6 @@ export default class CreditCardInput extends React.Component<Props, State> {
    * @param {string} cardNum - User's input card number
    * @returns {boolean} - True if the card number is validated.
    */
-  cardValidation = (cardNum: string): Valid => {
-    const startWith = /^[3456]/;
-
-    // If first digits do not match the requirement
-    if (!cardNum.match(startWith) || !(cardNum.match(startWith).length > 0)) {
-      return 'invalid';
-    }
-
-    if (cardNum.length >= 2) {
-    }
-
-    return 'valid';
-  };
-
   luhnMethod = (cardNum: string): boolean => {
     const validArray = [];
     let validResult = 0;
@@ -188,44 +220,45 @@ export default class CreditCardInput extends React.Component<Props, State> {
 
   onInputChange = (e: SyntheticEvent<HTMLInputElement>) => {
     let input = e.target.value.replace(/\s/g, '').trim();
-    console.log(`input value: ${input.slice(0)}`);
-    const cardType = this.checkCreditCardType(input);
-    let numberOfDigits = 0;
+    const [cardType, numberOfDigits] = this.checkCreditCardTypeAndNumberOfDigits(input);
     let placeholder = input.slice(0);
     let shownValue = input.slice(0);
-
-    switch (cardType) {
-      case 'amex':
-        // 0000 000000 00000
-        numberOfDigits = 15;
-        break;
-      case 'discover':
-        // 0000 0000 0000 0000
-        numberOfDigits = 16;
-        break;
-      case 'master':
-        // 0000 0000 0000 0000
-        numberOfDigits = 16;
-        break;
-      case 'visa':
-        // 0000 0000 0000 0000
-        // 0000 0000 0000 0
-        numberOfDigits = input.length < 14 ? 13 : 16;
-        break;
-      case 'none':
-        break;
-      default:
-    }
-
     while (placeholder.length < numberOfDigits) {
       placeholder = placeholder + '0';
     }
 
+    const valid = this.cardValidation(input, numberOfDigits);
+    let icon = null;
+    if (valid === 'invalid') {
+      icon = faTimesCircle;
+    } else {
+      switch (cardType) {
+        case 'amex':
+          icon = faCcAmex;
+          break;
+        case 'discover':
+          icon = faCcDiscover;
+          break;
+        case 'master':
+          icon = faCcMastercard;
+          break;
+        case 'visa':
+          icon = faCcVisa;
+          break;
+        default:
+          icon = null;
+      }
+    }
+
     this.setState((prevState) => {
       if (numberOfDigits === 0 || input.length <= numberOfDigits) {
+        placeholder =
+          input.length === 0 ? 'Number on your credit card' : this.formCardNumberToTemplate(placeholder, cardType);
         return {
-          placeholder: this.formCardNumberToTemplate(placeholder, cardType),
-          shownValue: this.formCardNumberToTemplate(shownValue, cardType)
+          placeholder: placeholder,
+          shownValue: this.formCardNumberToTemplate(shownValue, cardType),
+          valid: valid,
+          icon: icon
         };
       } else {
         return {};
@@ -233,9 +266,27 @@ export default class CreditCardInput extends React.Component<Props, State> {
     });
   };
 
+  onClickOnReset = () => {
+    if (this.state.valid === 'invalid') {
+      this.setState(
+        {
+          shownValue: '',
+          placeholder: 'Number on your credit card',
+          valid: 'matching',
+          icon: null
+        },
+        () => {
+          if (this.input) {
+            this.input.focus();
+          }
+        }
+      );
+    }
+  };
+
   render() {
     return (
-      <OuterContainer>
+      <OuterContainer valid={this.state.valid}>
         <InnerContainer>
           <InputBox
             innerRef={(ref) => {
@@ -247,7 +298,15 @@ export default class CreditCardInput extends React.Component<Props, State> {
             onChange={this.onInputChange}
           />
           <Placeholder placeholder={this.state.placeholder} />
-          <IconContainer>{this.state.icon && <FontAwesomeIcon icon={this.state.icon} />}</IconContainer>
+          <IconContainer>
+            {this.state.icon && (
+              <FontAwesomeIcon
+                icon={this.state.icon}
+                style={{ cursor: this.state.valid === 'invalid' ? 'pointer' : 'default' }}
+                onClick={this.onClickOnReset}
+              />
+            )}
+          </IconContainer>
         </InnerContainer>
       </OuterContainer>
     );
