@@ -48,8 +48,8 @@ yarn test
 
 ## CreditCardInput
 
-*A simple component for React, allow user to input credit card number and validate the number*
-*A react component is located at [./app/components/CreditCardInput](./app/components/CreditCardInput)*
+*A simple component for React, allow user to input credit card number and validate the number*  
+*The component is located at [./app/components/CreditCardInput](./app/components/CreditCardInput)*
 
 ### Props
 | Props | type | optional |  |
