@@ -49,7 +49,7 @@ yarn test
 ## CreditCardInput
 
 *A simple component for React, allow user to input credit card number and validate the number*  
-*The component is located at [./app/components/CreditCardInput](./app/components/CreditCardInput)*
+*The component is located at [app/componentsCreditCardInput](./app/components/CreditCardInput)*
 
 ### Props
 | Props | type | optional |  |
@@ -68,4 +68,5 @@ const getValidResult = (result) => { console.log(result) }
 `invalid`: the input number is an invalid credit card number  
 `matching`: the input number still under validating process
 
-
+### Example
+See [RootContainer.jsx](./app/RootContainer.jsx) for the example
