@@ -13,6 +13,7 @@ const OuterContainer = styled.div`
   padding: 3px;
   box-sizing: border-box;
   border-radius: 5px;
+  position: relative;
   background-image: ${(props) => {
     if (props.valid === 'valid') {
       return 'linear-gradient(to right, #3ec8ac 0%, #4e90a4 100%), linear-gradient(to right, #3ec8ac 0%, #4e90a4 100%)';
@@ -48,6 +49,16 @@ const IconContainer = styled.div`
   position: relative;
 `;
 
+const CaptionContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  transform: translateY(100%);
+  font-size: 0.8em;
+  padding-left: 10px;
+  box-sizing: border-box;
+  color: red;
+`;
+
 export const InputBox = styled.input`
   position: relative;
   z-index: 2;
@@ -76,7 +87,7 @@ const Placeholder = styled.input`
   left: 9.8px;
   box-sizing: border-box;
   border: none;
-   font-size: 18px;
+  font-size: 18px;
 
   &::placeholder {
     font-size: 18px;
@@ -252,24 +263,27 @@ export default class CreditCardInput extends React.Component<Props, State> {
       }
     }
 
-    this.setState((prevState) => {
-      if (numberOfDigits === 0 || input.length <= numberOfDigits) {
-        placeholder =
-          input.length === 0 ? 'Number on your credit card' : this.formCardNumberToTemplate(placeholder, cardType);
-        return {
-          placeholder: placeholder,
-          shownValue: this.formCardNumberToTemplate(shownValue, cardType),
-          valid: valid,
-          icon: icon
-        };
-      } else {
-        return {};
+    this.setState(
+      (prevState) => {
+        if (numberOfDigits === 0 || input.length <= numberOfDigits) {
+          placeholder =
+            input.length === 0 ? 'Number on your credit card' : this.formCardNumberToTemplate(placeholder, cardType);
+          return {
+            placeholder: placeholder,
+            shownValue: this.formCardNumberToTemplate(shownValue, cardType),
+            valid: valid,
+            icon: icon
+          };
+        } else {
+          return {};
+        }
+      },
+      () => {
+        if (this.props.getValidResult) {
+          this.props.getValidResult(this.state.valid);
+        }
       }
-    }, () => {
-      if (this.props.getValidResult) {
-        this.props.getValidResult(this.state.valid);
-      }
-    });
+    );
   };
 
   onClickOnReset = () => {
@@ -315,6 +329,7 @@ export default class CreditCardInput extends React.Component<Props, State> {
             )}
           </IconContainer>
         </InnerContainer>
+        {this.state.valid === 'invalid' && <CaptionContainer>Invalid card number</CaptionContainer>}
       </OuterContainer>
     );
   }
